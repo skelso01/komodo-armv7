@@ -286,14 +286,6 @@ pub enum AlertData {
     images: Vec<String>,
   },
 
-  /// An AWS builder failed to terminate.
-  AwsBuilderTerminationFailed {
-    /// The id of the aws instance which failed to terminate
-    instance_id: String,
-    /// A reason for the failure
-    message: String,
-  },
-
   /// A resource sync has pending updates
   ResourceSyncPendingUpdates {
     /// The id of the resource sync

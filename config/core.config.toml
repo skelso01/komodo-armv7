@@ -573,19 +573,6 @@ keep_stats_for_days = 14
 ## Default: 14
 keep_alerts_for_days = 14
 
-###################
-# CLOUD PROVIDERS #
-###################
-
-## Komodo can build images by deploying AWS EC2 instances,
-## running the build, and afterwards destroying the instance.
-
-## Provide AWS api keys for ephemeral builders
-## Env: KOMODO_AWS_ACCESS_KEY_ID or KOMODO_AWS_ACCESS_KEY_ID_FILE
-aws.access_key_id = ""
-## Env: KOMODO_AWS_SECRET_ACCESS_KEY or KOMODO_AWS_SECRET_ACCESS_KEY_FILE
-aws.secret_access_key = ""
-
 #################
 # GIT PROVIDERS #
 #################

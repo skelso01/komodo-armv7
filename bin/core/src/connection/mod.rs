@@ -13,9 +13,9 @@ use encoding::{
   WithChannel,
 };
 use komodo_client::entities::{
-  builder::{AwsBuilderConfig, UrlBuilderConfig},
   optional_str,
   server::Server,
+  builder::UrlBuilderConfig,
 };
 use mogh_cache::CloneCache;
 use mogh_error::serror_into_anyhow_error;
@@ -173,21 +173,6 @@ impl<'a> PeripheryConnectionArgs<'a> {
         &config.periphery_public_key,
       ),
       passkey: optional_str(&config.passkey),
-    }
-  }
-
-  pub fn from_aws_builder(
-    id: &'a str,
-    address: &'a str,
-    config: &'a AwsBuilderConfig,
-  ) -> Self {
-    Self {
-      id,
-      address: Some(address),
-      periphery_public_key: optional_str(
-        &config.periphery_public_key,
-      ),
-      passkey: None,
     }
   }
 

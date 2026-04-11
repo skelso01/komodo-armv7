@@ -5,7 +5,7 @@ use colored::Colorize;
 use komodo_client::entities::{
   config::{
     DatabaseConfig,
-    core::{AwsCredentials, CoreConfig, Env},
+    core::{CoreConfig, Env},
   },
   logger::LogConfig,
 };
@@ -267,18 +267,6 @@ pub fn core_config() -> &'static CoreConfig {
           env.komodo_github_oauth_secret,
         )
         .unwrap_or(config.github_oauth.client_secret),
-      },
-      aws: AwsCredentials {
-        access_key_id: maybe_read_item_from_file(
-          env.komodo_aws_access_key_id_file,
-          env.komodo_aws_access_key_id,
-        )
-        .unwrap_or(config.aws.access_key_id),
-        secret_access_key: maybe_read_item_from_file(
-          env.komodo_aws_secret_access_key_file,
-          env.komodo_aws_secret_access_key,
-        )
-        .unwrap_or(config.aws.secret_access_key),
       },
 
       // Non secrets
