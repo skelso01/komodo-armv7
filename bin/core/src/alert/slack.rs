@@ -449,21 +449,6 @@ pub async fn send_alert(
       ];
       (text, blocks.into())
     }
-    AlertData::AwsBuilderTerminationFailed {
-      instance_id,
-      message,
-    } => {
-      let text = format!(
-        "{level} | Failed to terminated AWS builder instance "
-      );
-      let blocks = vec![
-        Block::header(text.clone()),
-        Block::section(format!(
-          "instance id: *{instance_id}*\n{message}"
-        )),
-      ];
-      (text, blocks.into())
-    }
     AlertData::ResourceSyncPendingUpdates { id, name } => {
       let text = format!(
         "{level} | Pending resource sync updates on *{name}*"

@@ -259,14 +259,6 @@ pub async fn send_alert(
         "⬆ Stack **{name}** was updated automatically ⏫{target}\n{images_label}: **{images}**\n{link}"
       )
     }
-    AlertData::AwsBuilderTerminationFailed {
-      instance_id,
-      message,
-    } => {
-      format!(
-        "{level} | Failed to terminated AWS builder instance\ninstance id: **{instance_id}**\n{message}"
-      )
-    }
     AlertData::ResourceSyncPendingUpdates { id, name } => {
       let link =
         resource_link(ResourceTargetVariant::ResourceSync, id);

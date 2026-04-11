@@ -636,13 +636,6 @@ pub struct CoreConfig {
   #[serde(default = "default_monitoring_interval")]
   pub monitoring_interval: Timelength,
 
-  // ===================
-  // = Cloud Providers =
-  // ===================
-  /// Configure AWS credentials to use with AWS builds / server launches.
-  #[serde(default)]
-  pub aws: AwsCredentials,
-
   // =================
   // = Git Providers =
   // =================
@@ -957,12 +950,6 @@ impl CoreConfig {
       webhook_secret: empty_or_redacted(&config.webhook_secret),
       webhook_base_url: config.webhook_base_url,
       database: config.database.sanitized(),
-      aws: AwsCredentials {
-        access_key_id: empty_or_redacted(&config.aws.access_key_id),
-        secret_access_key: empty_or_redacted(
-          &config.aws.secret_access_key,
-        ),
-      },
       secrets: config
         .secrets
         .into_iter()
@@ -1005,15 +992,6 @@ impl CoreConfig {
       && !self.oidc_provider.is_empty()
       && !self.oidc_client_id.is_empty()
   }
-}
-
-/// Provide AWS credentials for Komodo to use.
-#[derive(Debug, Clone, Default, Deserialize)]
-pub struct AwsCredentials {
-  /// The aws ACCESS_KEY_ID
-  pub access_key_id: String,
-  /// The aws SECRET_ACCESS_KEY
-  pub secret_access_key: String,
 }
 
 impl mogh_server::ServerConfig for &CoreConfig {

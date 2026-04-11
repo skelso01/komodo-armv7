@@ -116,10 +116,7 @@ bollard = "0.20.2"
 sysinfo = "0.38.4"
 shlex = "1.3.0"
 
-# CLOUD
-aws-config = "1.8.15"
-aws-sdk-ec2 = "1.220.1"
-aws-credential-types = "1.2.14"
+
 
 ## CRON
 english-to-cron = "0.1.7"
