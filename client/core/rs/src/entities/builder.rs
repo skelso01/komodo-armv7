@@ -35,11 +35,10 @@ pub type _PartialBuilderConfig = PartialBuilderConfig;
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[cfg_attr(feature = "utoipa", derive(utoipa::ToSchema))]
 pub struct BuilderListItemInfo {
-  /// 'Url', 'Server', or 'Aws'
+  /// 'Url' or 'Server'
   pub builder_type: String,
   /// If 'Url': null
   /// If 'Server': the server id
-  /// If 'Aws': the instance type (eg. c5.xlarge)
   pub instance_type: Option<String>,
 }
 
@@ -82,14 +81,11 @@ pub enum BuilderConfig {
 
   /// Use a connected server as a Builder.
   Server(ServerBuilderConfig),
-
-  /// Use EC2 instances spawned on demand as a Builder.
-  Aws(AwsBuilderConfig),
 }
 
 impl Default for BuilderConfig {
   fn default() -> Self {
-    Self::Aws(Default::default())
+    Self::Url(Default::default())
   }
 }
 
@@ -130,7 +126,6 @@ impl Default for BuilderConfig {
 pub enum PartialBuilderConfig {
   Url(#[serde(default)] _PartialUrlBuilderConfig),
   Server(#[serde(default)] _PartialServerBuilderConfig),
-  Aws(#[serde(default)] _PartialAwsBuilderConfig),
 }
 
 impl Default for PartialBuilderConfig {
@@ -144,7 +139,6 @@ impl MaybeNone for PartialBuilderConfig {
     match self {
       PartialBuilderConfig::Url(config) => config.is_none(),
       PartialBuilderConfig::Server(config) => config.is_none(),
-      PartialBuilderConfig::Aws(config) => config.is_none(),
     }
   }
 }
@@ -154,7 +148,6 @@ impl MaybeNone for PartialBuilderConfig {
 pub enum BuilderConfigDiff {
   Url(UrlBuilderConfigDiff),
   Server(ServerBuilderConfigDiff),
-  Aws(AwsBuilderConfigDiff),
 }
 
 impl From<BuilderConfigDiff> for PartialBuilderConfig {
@@ -165,9 +158,6 @@ impl From<BuilderConfigDiff> for PartialBuilderConfig {
       }
       BuilderConfigDiff::Server(diff) => {
         PartialBuilderConfig::Server(diff.into())
-      }
-      BuilderConfigDiff::Aws(diff) => {
-        PartialBuilderConfig::Aws(diff.into())
       }
     }
   }
@@ -182,9 +172,6 @@ impl Diff for BuilderConfigDiff {
         diff.iter_field_diffs().collect::<Vec<_>>().into_iter()
       }
       BuilderConfigDiff::Server(diff) => {
-        diff.iter_field_diffs().collect::<Vec<_>>().into_iter()
-      }
-      BuilderConfigDiff::Aws(diff) => {
         diff.iter_field_diffs().collect::<Vec<_>>().into_iter()
       }
     }
@@ -207,10 +194,6 @@ impl PartialDiff<PartialBuilderConfig, BuilderConfigDiff>
           let default = ServerBuilderConfig::default();
           BuilderConfigDiff::Server(default.partial_diff(partial))
         }
-        PartialBuilderConfig::Aws(partial) => {
-          let default = AwsBuilderConfig::default();
-          BuilderConfigDiff::Aws(default.partial_diff(partial))
-        }
       },
       BuilderConfig::Server(original) => match partial {
         PartialBuilderConfig::Server(partial) => {
@@ -219,23 +202,6 @@ impl PartialDiff<PartialBuilderConfig, BuilderConfigDiff>
         PartialBuilderConfig::Url(partial) => {
           let default = UrlBuilderConfig::default();
           BuilderConfigDiff::Url(default.partial_diff(partial))
-        }
-        PartialBuilderConfig::Aws(partial) => {
-          let default = AwsBuilderConfig::default();
-          BuilderConfigDiff::Aws(default.partial_diff(partial))
-        }
-      },
-      BuilderConfig::Aws(original) => match partial {
-        PartialBuilderConfig::Aws(partial) => {
-          BuilderConfigDiff::Aws(original.partial_diff(partial))
-        }
-        PartialBuilderConfig::Url(partial) => {
-          let default = UrlBuilderConfig::default();
-          BuilderConfigDiff::Url(default.partial_diff(partial))
-        }
-        PartialBuilderConfig::Server(partial) => {
-          let default = ServerBuilderConfig::default();
-          BuilderConfigDiff::Server(default.partial_diff(partial))
         }
       },
     }
@@ -247,7 +213,6 @@ impl MaybeNone for BuilderConfigDiff {
     match self {
       BuilderConfigDiff::Url(config) => config.is_none(),
       BuilderConfigDiff::Server(config) => config.is_none(),
-      BuilderConfigDiff::Aws(config) => config.is_none(),
     }
   }
 }
@@ -261,9 +226,6 @@ impl From<PartialBuilderConfig> for BuilderConfig {
       PartialBuilderConfig::Server(server) => {
         BuilderConfig::Server(server.into())
       }
-      PartialBuilderConfig::Aws(builder) => {
-        BuilderConfig::Aws(builder.into())
-      }
     }
   }
 }
@@ -276,9 +238,6 @@ impl From<BuilderConfig> for PartialBuilderConfig {
       }
       BuilderConfig::Server(config) => {
         PartialBuilderConfig::Server(config.into())
-      }
-      BuilderConfig::Aws(config) => {
-        PartialBuilderConfig::Aws(config.into())
       }
     }
   }
@@ -315,49 +274,6 @@ impl MergePartial for BuilderConfig {
           BuilderConfig::Server(config)
         }
         _ => BuilderConfig::Server(partial.into()),
-      },
-      PartialBuilderConfig::Aws(partial) => match self {
-        BuilderConfig::Aws(config) => {
-          let config = AwsBuilderConfig {
-            region: partial.region.unwrap_or(config.region),
-            instance_type: partial
-              .instance_type
-              .unwrap_or(config.instance_type),
-            volume_gb: partial.volume_gb.unwrap_or(config.volume_gb),
-            ami_id: partial.ami_id.unwrap_or(config.ami_id),
-            subnet_id: partial.subnet_id.unwrap_or(config.subnet_id),
-            security_group_ids: partial
-              .security_group_ids
-              .unwrap_or(config.security_group_ids),
-            key_pair_name: partial
-              .key_pair_name
-              .unwrap_or(config.key_pair_name),
-            assign_public_ip: partial
-              .assign_public_ip
-              .unwrap_or(config.assign_public_ip),
-            use_public_ip: partial
-              .use_public_ip
-              .unwrap_or(config.use_public_ip),
-            port: partial.port.unwrap_or(config.port),
-            use_https: partial.use_https.unwrap_or(config.use_https),
-            periphery_public_key: partial
-              .periphery_public_key
-              .unwrap_or(config.periphery_public_key),
-            insecure_tls: partial
-              .insecure_tls
-              .unwrap_or(config.insecure_tls),
-            user_data: partial.user_data.unwrap_or(config.user_data),
-            git_providers: partial
-              .git_providers
-              .unwrap_or(config.git_providers),
-            docker_registries: partial
-              .docker_registries
-              .unwrap_or(config.docker_registries),
-            secrets: partial.secrets.unwrap_or(config.secrets),
-          };
-          BuilderConfig::Aws(config)
-        }
-        _ => BuilderConfig::Aws(partial.into()),
       },
     }
   }
@@ -476,175 +392,6 @@ impl utoipa::PartialSchema for PartialServerBuilderConfig {
 
 #[cfg(feature = "utoipa")]
 impl utoipa::ToSchema for PartialServerBuilderConfig {}
-
-#[typeshare(serialized_as = "Partial<AwsBuilderConfig>")]
-pub type _PartialAwsBuilderConfig = PartialAwsBuilderConfig;
-
-/// Configuration for an AWS builder.
-#[typeshare]
-#[derive(Debug, Clone, Serialize, Deserialize, Builder, Partial)]
-#[cfg_attr(feature = "utoipa", derive(utoipa::ToSchema))]
-#[partial_derive(Serialize, Deserialize, Debug, Clone, Default)]
-#[diff_derive(Serialize, Deserialize, Debug, Clone, Default)]
-#[partial(skip_serializing_none, from, diff)]
-pub struct AwsBuilderConfig {
-  /// The AWS region to create the instance in
-  #[serde(default = "aws_default_region")]
-  #[builder(default = "aws_default_region()")]
-  #[partial_default(aws_default_region())]
-  pub region: String,
-
-  /// The instance type to create for the build
-  #[serde(default = "aws_default_instance_type")]
-  #[builder(default = "aws_default_instance_type()")]
-  #[partial_default(aws_default_instance_type())]
-  pub instance_type: String,
-
-  /// The size of the builder volume in gb
-  #[serde(default = "aws_default_volume_gb")]
-  #[builder(default = "aws_default_volume_gb()")]
-  #[partial_default(aws_default_volume_gb())]
-  pub volume_gb: i32,
-
-  /// The EC2 ami id to create.
-  /// The ami should have the periphery client configured to start on startup,
-  /// and should have the necessary github / dockerhub accounts configured.
-  #[serde(default)]
-  #[builder(default)]
-  pub ami_id: String,
-  /// The subnet id to create the instance in.
-  #[serde(default)]
-  #[builder(default)]
-  pub subnet_id: String,
-  /// The key pair name to attach to the instance
-  #[serde(default)]
-  #[builder(default)]
-  pub key_pair_name: String,
-  /// Whether to assign the instance a public IP address.
-  /// Likely needed for the instance to be able to reach the open internet.
-  #[serde(default)]
-  #[builder(default)]
-  pub assign_public_ip: bool,
-  /// Whether core should use the public IP address to communicate with periphery on the builder.
-  /// If false, core will communicate with the instance using the private IP.
-  #[serde(default)]
-  #[builder(default)]
-  pub use_public_ip: bool,
-  /// The security group ids to attach to the instance.
-  /// This should include a security group to allow core inbound access to the periphery port.
-  #[serde(default, deserialize_with = "string_list_deserializer")]
-  #[partial_attr(serde(
-    default,
-    deserialize_with = "option_string_list_deserializer"
-  ))]
-  #[builder(default)]
-  pub security_group_ids: Vec<String>,
-  /// The user data to deploy the instance with.
-  #[serde(default)]
-  #[builder(default)]
-  pub user_data: String,
-
-  /// The port periphery will be running on.
-  /// Default: `8120`
-  #[serde(default = "default_port")]
-  #[builder(default = "default_port()")]
-  #[partial_default(default_port())]
-  pub port: i32,
-
-  #[serde(default = "default_use_https")]
-  #[builder(default = "default_use_https()")]
-  #[partial_default(default_use_https())]
-  pub use_https: bool,
-
-  /// An expected public key associated with Periphery private key.
-  /// If empty, doesn't validate Periphery public key.
-  #[serde(default)]
-  pub periphery_public_key: String,
-
-  /// Whether to validate the Periphery tls certificates.
-  #[serde(default = "default_insecure_tls")]
-  #[builder(default = default_insecure_tls())]
-  #[partial_default(default_insecure_tls())]
-  pub insecure_tls: bool,
-
-  /// Which git providers are available on the AMI
-  #[serde(default)]
-  #[builder(default)]
-  pub git_providers: Vec<GitProvider>,
-  /// Which docker registries are available on the AMI.
-  #[serde(default)]
-  #[builder(default)]
-  pub docker_registries: Vec<DockerRegistry>,
-  /// Which secrets are available on the AMI.
-  #[serde(default, deserialize_with = "string_list_deserializer")]
-  #[partial_attr(serde(
-    default,
-    deserialize_with = "option_string_list_deserializer"
-  ))]
-  #[builder(default)]
-  pub secrets: Vec<String>,
-}
-
-impl Default for AwsBuilderConfig {
-  fn default() -> Self {
-    Self {
-      region: aws_default_region(),
-      instance_type: aws_default_instance_type(),
-      volume_gb: aws_default_volume_gb(),
-      port: default_port(),
-      use_https: default_use_https(),
-      ami_id: Default::default(),
-      subnet_id: Default::default(),
-      security_group_ids: Default::default(),
-      key_pair_name: Default::default(),
-      assign_public_ip: Default::default(),
-      use_public_ip: Default::default(),
-      user_data: Default::default(),
-      periphery_public_key: Default::default(),
-      insecure_tls: default_insecure_tls(),
-      git_providers: Default::default(),
-      docker_registries: Default::default(),
-      secrets: Default::default(),
-    }
-  }
-}
-
-impl AwsBuilderConfig {
-  pub fn builder() -> AwsBuilderConfigBuilder {
-    AwsBuilderConfigBuilder::default()
-  }
-}
-
-fn aws_default_region() -> String {
-  String::from("us-east-1")
-}
-
-fn aws_default_instance_type() -> String {
-  String::from("c5.2xlarge")
-}
-
-fn aws_default_volume_gb() -> i32 {
-  20
-}
-
-fn default_port() -> i32 {
-  8120
-}
-
-fn default_use_https() -> bool {
-  true
-}
-
-#[cfg(feature = "utoipa")]
-impl utoipa::PartialSchema for PartialAwsBuilderConfig {
-  fn schema()
-  -> utoipa::openapi::RefOr<utoipa::openapi::schema::Schema> {
-    utoipa::schema!(#[inline] std::collections::HashMap<String, serde_json::Value>).into()
-  }
-}
-
-#[cfg(feature = "utoipa")]
-impl utoipa::ToSchema for PartialAwsBuilderConfig {}
 
 #[typeshare]
 pub type BuilderQuery = ResourceQuery<BuilderQuerySpecifics>;

@@ -56,10 +56,6 @@ impl super::KomodoResource for Builder {
         BuilderConfigVariant::Server.to_string(),
         Some(config.server_id),
       ),
-      BuilderConfig::Aws(config) => (
-        BuilderConfigVariant::Aws.to_string(),
-        Some(config.instance_type),
-      ),
     };
     BuilderListItem {
       name: builder.name,

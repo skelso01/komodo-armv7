@@ -490,14 +490,6 @@ fn standard_alert_content(alert: &Alert) -> String {
         "⬆ Stack {name} was updated automatically ⏫{target}\n{images_label}: {images_str}\n{link}",
       )
     }
-    AlertData::AwsBuilderTerminationFailed {
-      instance_id,
-      message,
-    } => {
-      format!(
-        "{level} | Failed to terminate AWS builder instance\ninstance id: {instance_id}\n{message}",
-      )
-    }
     AlertData::ResourceSyncPendingUpdates { id, name } => {
       let link =
         resource_link(ResourceTargetVariant::ResourceSync, id);
