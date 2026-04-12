@@ -4,13 +4,8 @@ use serde::{Deserialize, Serialize};
 use strum::{AsRefStr, Display, EnumDiscriminants, EnumString};
 use typeshare::typeshare;
 
-use crate::deserializers::{
-  option_string_list_deserializer, string_list_deserializer,
-};
-
 use super::{
   MergePartial,
-  config::{DockerRegistry, GitProvider},
   resource::{AddFilters, Resource, ResourceListItem, ResourceQuery},
 };
 

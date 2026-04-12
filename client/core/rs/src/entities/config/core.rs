@@ -941,7 +941,6 @@ impl Default for CoreConfig {
       keep_alerts_for_days: default_prune_days(),
       resource_poll_interval: default_poll_interval(),
       monitoring_interval: default_monitoring_interval(),
-      aws: Default::default(),
       git_providers: Default::default(),
       docker_registries: Default::default(),
       secrets: Default::default(),
