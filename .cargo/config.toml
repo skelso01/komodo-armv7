@@ -1,2 +1,8 @@
 [build]
 rustflags = ["-Wunused-crate-dependencies"]
+
+# Reduce memory usage for ARM v7 build
+[profile.release]
+lto = false
+codegen-units = 16
+opt-level = 2
