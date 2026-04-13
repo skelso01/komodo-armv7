@@ -448,7 +448,6 @@ impl ToToml for Builder {
     toml: &mut String,
   ) {
     let empty_params = match resource.config {
-      PartialBuilderConfig::Aws(config) => config.is_none(),
       PartialBuilderConfig::Server(config) => config.is_none(),
       PartialBuilderConfig::Url(config) => config.is_none(),
     };
