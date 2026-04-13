@@ -3,9 +3,11 @@ xtask = "run --package xtask --"
 
 [build]
 rustflags = ["-Wunused-crate-dependencies"]
+incremental = true
 
 # Reduce memory usage for ARM v7 build
 [profile.release]
 lto = false
-codegen-units = 16
-opt-level = 2
+codegen-units = 32
+opt-level = 1
+strip = true
