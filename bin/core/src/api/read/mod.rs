@@ -380,10 +380,6 @@ impl Resolve<ReadArgs> for ListSecrets {
           match resource::get::<Builder>(&id).await?.config {
             BuilderConfig::Url(_) => None,
             BuilderConfig::Server(config) => Some(config.server_id),
-            BuilderConfig::Aws(config) => {
-              secrets.extend(config.secrets);
-              None
-            }
           }
         }
         _ => {
@@ -439,12 +435,6 @@ impl Resolve<ReadArgs> for ListGitProvidersFromConfig {
                 &config.server_id,
               )
               .await?;
-            }
-            BuilderConfig::Aws(config) => {
-              merge_git_providers(
-                &mut providers,
-                config.git_providers,
-              );
             }
           }
         }
@@ -545,12 +535,6 @@ impl Resolve<ReadArgs> for ListDockerRegistriesFromConfig {
                 &config.server_id,
               )
               .await?;
-            }
-            BuilderConfig::Aws(config) => {
-              merge_docker_registries(
-                &mut registries,
-                config.docker_registries,
-              );
             }
           }
         }
