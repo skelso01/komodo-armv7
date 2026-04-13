@@ -22,9 +22,7 @@ const BUILDER_POLL_MAX_TRIES: usize = 60;
   "ConnectBuilderPeriphery",
   skip_all,
   fields(
-    resource_name,
     builder_id = builder.id,
-    update_id = update.id
   )
 )]
 pub async fn connect_builder_periphery(
