@@ -1,2 +1,13 @@
 [build]
 rustflags = ["-Wunused-crate-dependencies"]
+incremental = false
+jobs = 1
+
+# Massive memory reduction for ARM v7 build
+[profile.release]
+opt-level = 0
+lto = false
+codegen-units = 1
+strip = true
+debug = false
+split-debuginfo = "off"

@@ -1,45 +1,32 @@
-use std::time::Duration;
-
 use anyhow::{Context, anyhow};
 use database::mungos::mongodb::bson::oid::ObjectId;
-use formatting::muted;
 use komodo_client::entities::{
-  Version,
   builder::{Builder, BuilderConfig},
-  komodo_timestamp,
   server::Server,
-  update::{Log, Update},
+  update::Update,
 };
-use periphery_client::api::{self, GetVersionResponse};
 
 use crate::{
   cloud::BuildCleanupData,
   connection::PeripheryConnectionArgs,
-  helpers::update::update_update,
   periphery::PeripheryClient,
   resource,
 };
 
 use super::periphery_client;
 
-const BUILDER_POLL_RATE_SECS: u64 = 2;
-const BUILDER_POLL_MAX_TRIES: usize = 60;
-
 #[instrument(
   "ConnectBuilderPeriphery",
   skip_all,
   fields(
-    resource_name,
     builder_id = builder.id,
-    update_id = update.id
   )
 )]
 pub async fn connect_builder_periphery(
-  // build: &Build,
-  resource_name: String,
-  version: Option<Version>,
+  _resource_name: String,
+  _version: Option<komodo_client::entities::Version>,
   builder: Builder,
-  update: &mut Update,
+  _update: &mut Update,
 ) -> anyhow::Result<(PeripheryClient, BuildCleanupData)> {
   match builder.config {
     BuilderConfig::Url(config) => {

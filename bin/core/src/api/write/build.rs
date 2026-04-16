@@ -477,9 +477,6 @@ async fn get_on_host_periphery(
     .context("Failed to get builder")?;
 
   match builder.config {
-    BuilderConfig::Aws(_) => {
-      Err(anyhow!("Files on host doesn't work with AWS builder"))
-    }
     BuilderConfig::Url(config) => {
       // TODO: Ensure connection is actually established.
       // Builder id no good because it may be active for multiple connections.
