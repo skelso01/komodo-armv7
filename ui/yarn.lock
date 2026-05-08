@@ -911,10 +911,10 @@ mogh_auth_client@^1.5.0:
   dependencies:
     jwt-decode "^4.0.0"
 
-mogh_ui@^0.5.1:
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/mogh_ui/-/mogh_ui-0.5.1.tgz#fcaf95716b3a8169fde3b49e1df529fbcb1bbfa6"
-  integrity sha512-WYeIujOfCKTtu7+W5NPTU3SiNHUSVLz9jj3Gjxvt6gQemwyW0lptnagCVOceLaeGdY4wLOjaJ/HT5F9PIUga5g==
+mogh_ui@^0.6.1:
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/mogh_ui/-/mogh_ui-0.6.1.tgz#c03db66bc4f830706bb17c2733eb541566930b29"
+  integrity sha512-OpEN7HAYOvj/RWLOtkNem4eU82etribTQrfVi0bmNyBh5Zw0GY2FoanAHU0cCB2a5Q2rZD6keWb2axQhWog30A==
 
 monaco-editor@^0.55.1:
   version "0.55.1"
